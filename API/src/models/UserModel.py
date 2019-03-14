@@ -3,6 +3,8 @@ from marshmallow import fields, Schema
 import datetime
 from . import db
 
+from .DreamModel import DreamModelSchema
+
 
 class UserModel(db.Model):
     """
@@ -10,14 +12,15 @@ class UserModel(db.Model):
     """
 
     # table name
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
-    id = db.Column(di.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(50), nullable=False)
     pass = db.Column(db.String(50), nullable=False)
     mail = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
+    dream = db.relationship('DreamModel', backref='users', lazy=True)
 
     # class constructor
     def __init__(self, data):
@@ -25,7 +28,7 @@ class UserModel(db.Model):
         Class constructor
         """
         self.pseudo = data.get('pseudo')
-        self.pass = self.password = self.__generate_hash(data.get('password'))
+        self.password = self.__generate_hash(data.get('password'))
         self.mail = data.get('mail')
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
@@ -66,3 +69,16 @@ class UserModel(db.Model):
 
     def __repr(self):
         return '<id {}>'.format(self.id)
+
+
+class UserSchema(Schema):
+    """
+    User Schema
+    """
+    id = fields.Int(dump_only=True)
+    pseudo = fields.Str(required=True)
+    password = fields.Str(required=True)
+    mail = fields.Email(required=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    dream = fields.Nested(DreamSchema, many=True)
