@@ -27,6 +27,7 @@ class DreamModel(db.Model):
     whereToEat = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 # class constructor
     def __init__(self, data):
@@ -48,6 +49,7 @@ class DreamModel(db.Model):
         self.whereToEat = data.get('whereToEat')
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
+        self.owner_id = data.get('owner_id)
 
     def save(self):
         db.session.add(self)
@@ -73,3 +75,26 @@ class DreamModel(db.Model):
 
     def __repr(self):
         return '<id {}>'.format(self.id)
+
+
+class DreamSchema(Schema):
+    """
+        Dream Schema
+    """
+    idDream = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    img = fields.Str(required=True)
+    country = fields.Str(required=True)
+    adress = fields.Str(required=True)
+    note = fields.Str()
+    travel = fields.Boolean(required=True)
+    date = fields.Str()
+    infoTransport = fields.Str()
+    costTransport = fields.Float()
+    accommodation = fields.Str()
+    costAccommodation = fields.Float()
+    whatTodo = fields.Str()
+    whereToEat = fields.Str()
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    owner_id = fields.Int(required=True)
