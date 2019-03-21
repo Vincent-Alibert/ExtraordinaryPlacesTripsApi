@@ -2,6 +2,10 @@
 from marshmallow import fields, Schema
 import datetime
 from . import db
+from . import dream_cat, dream_cattransp
+
+from .CatDreamModel import CatDreamSchema
+from .CatTransportModel import CatTransportSchema
 
 
 class DreamModel(db.Model):
@@ -27,12 +31,19 @@ class DreamModel(db.Model):
     whereToEat = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # définition des relations
+    fk_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# class constructor
+    fk_catdream = relationship(
+        'CatDreamModel', secondary=dream_cat, back_populates='dream')
+    fk_catdream = relationship(
+        'CatDreamModel', secondary=dream_cat, back_populates='dream')
+
+    # class constructor
+
     def __init__(self, data):
         """
-        Class constructor
+         Class constructor
         """
         self.name = data.get('name')
         self.img = data.get('img')
@@ -49,7 +60,9 @@ class DreamModel(db.Model):
         self.whereToEat = data.get('whereToEat')
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
-        self.owner_id = data.get('owner_id)
+        self.fk_user = data.get('fk_user')
+        self.fk_catdream = data.get('fk_catdream')
+        self.fk_cattransport = data.get('fk_cattransport')
 
     def save(self):
         db.session.add(self)
@@ -74,7 +87,7 @@ class DreamModel(db.Model):
         return DreamModel.query.get(id)
 
     def __repr(self):
-        return '<id {}>'.format(self.id)
+        return '<id :{1}, name : {2}>'.format(self.id, self.name)
 
 
 class DreamSchema(Schema):
@@ -97,4 +110,6 @@ class DreamSchema(Schema):
     whereToEat = fields.Str()
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
-    owner_id = fields.Int(required=True)
+    fk_user = fields.Int(required=True)
+    fk_catdream = fields.Nested(CatDreamSchema, many=True)
+    # fk_cattransport = fields.Int(required=False)

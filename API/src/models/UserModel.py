@@ -2,8 +2,9 @@
 from marshmallow import fields, Schema
 import datetime
 from . import db
+from ..app import bcrypt
 
-from .DreamModel import DreamModelSchema
+from .DreamModel import DreamSchema
 
 
 class UserModel(db.Model):
@@ -16,11 +17,11 @@ class UserModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(50), nullable=False)
-    pass = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
     mail = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
-    dream = db.relationship('DreamModel', backref='users', lazy=True)
+    dream = db.relationship('DreamModel', backref='user', lazy=True)
 
     # class constructor
     def __init__(self, data):
