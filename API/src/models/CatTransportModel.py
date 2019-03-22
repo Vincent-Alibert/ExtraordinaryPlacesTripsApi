@@ -2,9 +2,6 @@ from marshmallow import fields, Schema
 from . import db
 from . import dream_cattransp
 
-from .DreamModel import DreamSchema
-
-
 class CatTranspModel(db.Model):
     """
         Catégorie de transport
@@ -14,8 +11,8 @@ class CatTranspModel(db.Model):
     __tableaname__ = "cattransp"
 
     idCat = db.Column(db.Integer, primary_key=True)
-    name = Column(String(50), nullable=False, unique=True)
-    fk_dream = relationship(
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    fk_dream = db.relationship(
         'DreamModel', secondary=dream_cattransp, back_populates='cattransp')
 
     def __init__(self, data):
@@ -50,4 +47,4 @@ class CatTransportSchema(Schema):
     """
     idCat = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    fk_dream = fields.Nested(DreamSchema, many=True)
+    fk_dream = fields.Nested("DreamSchema", many=True, exclude=('fk_cattransport',))

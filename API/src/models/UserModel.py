@@ -1,8 +1,6 @@
-# src/models/UserModel.py
 from marshmallow import fields, Schema
 import datetime
-from . import db
-from ..app import bcrypt
+from . import db,bcrypt
 
 from .DreamModel import DreamSchema
 
@@ -40,8 +38,8 @@ class UserModel(db.Model):
 
     def update(self, data):
         for key, item in data.items():
-        if key == 'password':  # add this new line
-            self.password = self.__generate_hash(value)  # add this new line
+            if key == 'password': 
+                self.password = self.__generate_hash(value)  
         setattr(self, key, item)
         self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
@@ -68,7 +66,7 @@ class UserModel(db.Model):
     def get_user_by_email(value):
         return UserModel.query.filter_by(email=value).first()
 
-    def __repr(self):
+    def __repr__(self):
         return '<id {}>'.format(self.id)
 
 

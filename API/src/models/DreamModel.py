@@ -1,11 +1,10 @@
-# src/models/DreamModel.py
 from marshmallow import fields, Schema
 import datetime
 from . import db
 from . import dream_cat, dream_cattransp
 
-from .CatDreamModel import CatDreamSchema
-from .CatTransportModel import CatTransportSchema
+# from .CatDreamModel import CatDreamModelSchema
+# from .CatTransportModel import CatTransportSchema
 
 
 class DreamModel(db.Model):
@@ -34,10 +33,10 @@ class DreamModel(db.Model):
     # définition des relations
     fk_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    fk_catdream = relationship(
-        'CatDreamModel', secondary=dream_cat, back_populates='dream')
-    fk_catdream = relationship(
-        'CatDreamModel', secondary=dream_cat, back_populates='dream')
+    fk_catdream = db.relationship(
+        'CatDreamModel', secondary=dream_cat, back_populates='dream', lazy="dynamic")
+    fk_cattransport = db.relationship(
+        'CatTranspModel', secondary=dream_cattransp, back_populates='dream', lazy="dynamic")
 
     # class constructor
 
@@ -86,8 +85,8 @@ class DreamModel(db.Model):
     def get_one_dream(id):
         return DreamModel.query.get(id)
 
-    def __repr(self):
-        return '<id :{1}, name : {2}>'.format(self.id, self.name)
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
 
 
 class DreamSchema(Schema):
@@ -111,5 +110,6 @@ class DreamSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
     fk_user = fields.Int(required=True)
-    fk_catdream = fields.Nested(CatDreamSchema, many=True)
-    # fk_cattransport = fields.Int(required=False)
+
+    fk_catdream = fields.Nested('CatDreamSchema', many=True)
+    fk_cattransport = fields.Nested('CatTransportSchema', many=True)

@@ -2,8 +2,6 @@ from marshmallow import fields, Schema
 from . import db
 from . import dream_cat
 
-from .DreamModel import DreamSchema
-
 
 class CatDreamModel(db.Model):
     """
@@ -14,8 +12,8 @@ class CatDreamModel(db.Model):
     __tableaname__ = "catdream"
 
     idCat = db.Column(db.Integer, primary_key=True)
-    name = Column(String(50), nullable=False, unique=True)
-    fk_dream = relationship(
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    fk_dream = db.relationship(
         'DreamModel', secondary=dream_cat, back_populates='catdream')
 
     def __init__(self, data):
@@ -50,4 +48,4 @@ class CatDreamSchema(Schema):
     """
     idCat = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    fk_dream = fields.Nested(DreamSchema, many=True)
+    fk_dream = fields.Nested("DreamSchema", many=True, exclude=('fk_catdream',))
