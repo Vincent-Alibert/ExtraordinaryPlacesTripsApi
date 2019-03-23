@@ -1,6 +1,6 @@
 from marshmallow import fields, Schema
 from . import db
-from . import dream_cattransp
+
 
 class CatTranspModel(db.Model):
     """
@@ -12,8 +12,7 @@ class CatTranspModel(db.Model):
 
     idCat = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
-    fk_dream = db.relationship(
-        'DreamModel', secondary=dream_cattransp, back_populates='cattransp')
+    
 
     def __init__(self, data):
         """

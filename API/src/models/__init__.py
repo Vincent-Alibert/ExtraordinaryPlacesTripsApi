@@ -5,18 +5,17 @@ from sqlalchemy.ext.declarative import declarative_base
 # initialise db
 db = SQLAlchemy()
 bcrypt = Bcrypt()
-Base = declarative_base()
 
 
 # creation de l'association
-dream_cat = db.Table('dream_cat', Base.metadata,
+dream_cat = db.Table('dream_cat', 
                      db.Column('dream_id', db.Integer,
                                db.ForeignKey('dream.idDream')),
                      db.Column('cat_id', db.Integer,
                                db.ForeignKey('catdream.idCat'))
                      )
 
-dream_cattransp = db.Table('dream_cattransp', Base.metadata,
+dream_cattransp = db.Table('dream_cattransp',
                            db.Column('dream_id', db.Integer,
                                      db.ForeignKey('dream.idDream')),
                            db.Column('cattransp_id', db.Integer,

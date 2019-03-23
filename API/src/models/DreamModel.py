@@ -1,11 +1,20 @@
 from marshmallow import fields, Schema
 import datetime
 from . import db
-from . import dream_cat, dream_cattransp
+from .CatDreamModel import CatDreamModel 
 
-# from .CatDreamModel import CatDreamModelSchema
-# from .CatTransportModel import CatTransportSchema
+dream_cat = db.Table('dream_cat',
+                     db.Column('dream_id', db.Integer, db.ForeignKey('dream.idDream'), primary_key=True),
+                     db.Column('cat_id', db.Integer, db.ForeignKey('catdream.idCat'), primary_key=True)
+                     )
 
+
+dream_cattransp = db.Table('dream_cattransp', 
+                           db.Column('dream_id', db.Integer,
+                                     db.ForeignKey('dream.idDream'), primary_key=True),
+                           db.Column('cattransp_id', db.Integer,
+                                     db.ForeignKey('cattransp.idCattransp'), primary_key=True)
+                           )
 
 class DreamModel(db.Model):
     """
@@ -31,12 +40,12 @@ class DreamModel(db.Model):
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
     # définition des relations
-    fk_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    fk_catdream = db.relationship(
-        'CatDreamModel', secondary=dream_cat, back_populates='dream', lazy="dynamic")
-    fk_cattransport = db.relationship(
-        'CatTranspModel', secondary=dream_cattransp, back_populates='dream', lazy="dynamic")
+    catofdream = db.relationship(
+        'CatDreamModel', secondary=dream_cat, backref=db.backref('dreams', lazy='dynamic'))
+    catoftransport = db.relationship(
+        'cattransp', secondary=dream_cattransp, backref=db.backref('dreams', lazy='dynamic'))
 
     # class constructor
 
