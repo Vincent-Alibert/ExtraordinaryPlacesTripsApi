@@ -2,15 +2,15 @@ from marshmallow import fields, Schema
 from . import db
 
 
-class CatTranspModel(db.Model):
+class CatTransportModel(db.Model):
     """
         Catégorie de transport
     """
 
     # table name
-    __tableaname__ = "cattransp"
+    __tablename__ = "cattransp"
 
-    idCat = db.Column(db.Integer, primary_key=True)
+    idCatTransp = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     
 
@@ -19,7 +19,6 @@ class CatTranspModel(db.Model):
          Class constructor
         """
         self.name = data.get("name")
-        self.fk_dream = data.get('fk_dream')
 
     def save(self):
         db.session.add(self)

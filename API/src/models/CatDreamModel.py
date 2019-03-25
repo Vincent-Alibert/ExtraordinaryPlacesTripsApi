@@ -2,14 +2,13 @@ from marshmallow import fields, Schema
 from . import db
 
 
-
 class CatDreamModel(db.Model):
     """
         Catégorie de rêve
     """
 
     # table name
-    __tableaname__ = "catdream"
+    __tablename__ = "catdream"
 
     idCat = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
@@ -20,7 +19,6 @@ class CatDreamModel(db.Model):
          Class constructor
         """
         self.name = data.get("name")
-        self.fk_dream = data.get('fk_dream')
 
     def save(self):
         db.session.add(self)

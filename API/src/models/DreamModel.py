@@ -2,18 +2,19 @@ from marshmallow import fields, Schema
 import datetime
 from . import db
 from .CatDreamModel import CatDreamModel 
+from .CatTransportModel import CatTransportModel 
 
-dream_cat = db.Table('dream_cat',
+dream_cat = db.Table('dreamcat',
                      db.Column('dream_id', db.Integer, db.ForeignKey('dream.idDream'), primary_key=True),
                      db.Column('cat_id', db.Integer, db.ForeignKey('catdream.idCat'), primary_key=True)
                      )
 
 
-dream_cattransp = db.Table('dream_cattransp', 
+dream_cattransp = db.Table('dreamcattransp', 
                            db.Column('dream_id', db.Integer,
                                      db.ForeignKey('dream.idDream'), primary_key=True),
                            db.Column('cattransp_id', db.Integer,
-                                     db.ForeignKey('cattransp.idCattransp'), primary_key=True)
+                                     db.ForeignKey('cattransp.idCatTransp'), primary_key=True)
                            )
 
 class DreamModel(db.Model):
@@ -37,15 +38,15 @@ class DreamModel(db.Model):
     costAccommodation = db.Column(db.Float)
     whatTodo = db.Column(db.Text)
     whereToEat = db.Column(db.Text)
-    created_at = db.Column(db.DateTime)
-    modified_at = db.Column(db.DateTime)
+    createdAt = db.Column(db.DateTime)
+    modifiedAt = db.Column(db.DateTime)
     # définition des relations
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    catofdream = db.relationship(
+    catOfDream = db.relationship(
         'CatDreamModel', secondary=dream_cat, backref=db.backref('dreams', lazy='dynamic'))
-    catoftransport = db.relationship(
-        'cattransp', secondary=dream_cattransp, backref=db.backref('dreams', lazy='dynamic'))
+    catOfTransport = db.relationship(
+        'CatTransportModel', secondary=dream_cattransp, backref=db.backref('dreams', lazy='dynamic'))
 
     # class constructor
 
@@ -66,11 +67,11 @@ class DreamModel(db.Model):
         self.costAccommodation = data.get('costAccommodation')
         self.whatTodo = data.get('whatTodo')
         self.whereToEat = data.get('whereToEat')
-        self.created_at = datetime.datetime.utcnow()
-        self.modified_at = datetime.datetime.utcnow()
-        self.fk_user = data.get('fk_user')
-        self.fk_catdream = data.get('fk_catdream')
-        self.fk_cattransport = data.get('fk_cattransport')
+        self.createdAt = datetime.datetime.utcnow()
+        self.modifiedAt = datetime.datetime.utcnow()
+        self.user = data.get('user')
+        self.catOfDream = data.get('catOfDream')
+        self.catOfTransport = data.get('catOfTransport')
 
     def save(self):
         db.session.add(self)
