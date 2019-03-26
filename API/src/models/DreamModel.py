@@ -41,8 +41,7 @@ class DreamModel(db.Model):
     createdAt = db.Column(db.DateTime)
     modifiedAt = db.Column(db.DateTime)
     # définition des relations
-    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    ownerUser = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     catOfDream = db.relationship(
         'CatDreamModel', secondary=dream_cat, backref=db.backref('dreams', lazy='dynamic'))
     catOfTransport = db.relationship(
@@ -69,7 +68,7 @@ class DreamModel(db.Model):
         self.whereToEat = data.get('whereToEat')
         self.createdAt = datetime.datetime.utcnow()
         self.modifiedAt = datetime.datetime.utcnow()
-        self.user = data.get('user')
+        self.ownerUser = data.get('ownerUser')
         self.catOfDream = data.get('catOfDream')
         self.catOfTransport = data.get('catOfTransport')
 
@@ -119,7 +118,6 @@ class DreamSchema(Schema):
     whereToEat = fields.Str()
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
-    fk_user = fields.Int(required=True)
-
-    fk_catdream = fields.Nested('CatDreamSchema', many=True)
-    fk_cattransport = fields.Nested('CatTransportSchema', many=True)
+    ownerUser = fields.Int(required=True)
+    catOfDream = fields.Nested('CatDreamSchema', many=True)
+    catOfTransport = fields.Nested('CatTransportSchema', many=True)

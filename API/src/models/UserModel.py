@@ -15,11 +15,11 @@ class UserModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
     mail = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
-    dream = db.relationship('DreamModel', backref='user', lazy=True)
+    dreams = db.relationship('DreamModel', backref='user', lazy=True)
 
     # class constructor
     def __init__(self, data):
@@ -64,7 +64,7 @@ class UserModel(db.Model):
 
     @staticmethod
     def get_user_by_email(value):
-        return UserModel.query.filter_by(email=value).first()
+        return UserModel.query.filter_by(mail=value).first()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -80,4 +80,4 @@ class UserSchema(Schema):
     mail = fields.Email(required=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
-    dream = fields.Nested(DreamSchema, many=True)
+    dreams = fields.Nested(DreamSchema, many=True)

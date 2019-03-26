@@ -45,4 +45,4 @@ class CatDreamSchema(Schema):
     """
     idCat = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    fk_dream = fields.Nested("DreamSchema", many=True, exclude=('fk_catdream',))
+    dreams = fields.Nested("DreamSchema", many=True, exclude=('catOfDream',))
