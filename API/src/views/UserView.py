@@ -2,13 +2,13 @@ from flask import request, json, Response, Blueprint, g
 from ..models.UserModel import UserModel, UserSchema
 from ..shared.Authentication import Auth
 
-from marshmallow import pprint
+# from marshmallow import pprint
 
 user_api = Blueprint('user_api', __name__)
 user_schema = UserSchema()
 
 
-@user_api.route('/enregistrement', methods=['POST'])
+@user_api.route('/create', methods=['POST'])
 def create():
     """
     Create User Fonction
@@ -30,10 +30,6 @@ def create():
     user.save()
 
     ser_data = user_schema.dump(user).data
-
-    print('ser_dataaaaa')
-    pprint(ser_data)
-
     token = Auth.generate_token(ser_data.get('id'))
 
     return custom_response({'jwt_token': token}, 201)
@@ -67,11 +63,7 @@ def login():
   if not user.check_hash(data.get('password')):
     return custom_response({'error': 'invalid credentials'}, 400)
 
-  pprint(user_schema.dump(user))
-
   ser_data = user_schema.dump(user).data
-
-  pprint(ser_data)
 
   token = Auth.generate_token(ser_data.get('id'))
 

@@ -3,3 +3,4 @@ include/*
 lib/*
 migrations/*
 __pycache__/*
+todo/*

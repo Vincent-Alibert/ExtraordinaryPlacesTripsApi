@@ -1,6 +1,6 @@
 from marshmallow import fields, Schema
 from . import db
-
+import datetime
 
 class CatDreamModel(db.Model):
     """
@@ -12,13 +12,16 @@ class CatDreamModel(db.Model):
 
     idCat = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
-    
+    created_at = db.Column(db.DateTime)
+    modified_at = db.Column(db.DateTime)
 
     def __init__(self, data):
         """
          Class constructor
         """
         self.name = data.get("name")
+        self.created_at = datetime.datetime.utcnow()
+        self.modified_at = datetime.datetime.utcnow()
 
     def save(self):
         db.session.add(self)
@@ -27,7 +30,6 @@ class CatDreamModel(db.Model):
     def update(self, data):
         for key, item in data.items():
             setattr(self, key, item)
-        self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
 
     def delete(self):
@@ -35,8 +37,11 @@ class CatDreamModel(db.Model):
         de.session.commit()
 
     @staticmethod
-    def get_one_cat(idCat):
-        return CatDream.query.get(idCat)
+    def get_one_cat(name):
+        """
+        Get one catégorie by name
+        """
+        return CatDreamModel.query.filter_by(name=name).first()
 
 
 class CatDreamSchema(Schema):
@@ -45,4 +50,6 @@ class CatDreamSchema(Schema):
     """
     idCat = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    dreams = fields.Nested("DreamSchema", many=True, exclude=('catOfDream',))
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    dreams = fields.Nested("DreamSchema", exclude=('catOfDream',), many=True)

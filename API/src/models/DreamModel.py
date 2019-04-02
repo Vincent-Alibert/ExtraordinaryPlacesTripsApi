@@ -26,7 +26,7 @@ class DreamModel(db.Model):
 
     idDream = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    img = db.Column(db.String(255), nullable=False)
+    # img = db.Column(db.String(255), nullable=False)
     country = db.Column(db.String(255), nullable=False)
     adress = db.Column(db.String(255), nullable=False)
     note = db.Column(db.Text)
@@ -54,7 +54,7 @@ class DreamModel(db.Model):
          Class constructor
         """
         self.name = data.get('name')
-        self.img = data.get('img')
+        # self.img = data.get('img')
         self.country = data.get('country')
         self.adress = data.get('adress')
         self.note = data.get('note')
@@ -104,7 +104,7 @@ class DreamSchema(Schema):
     """
     idDream = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    img = fields.Str(required=True)
+    # img = fields.Str(required=True)
     country = fields.Str(required=True)
     adress = fields.Str(required=True)
     note = fields.Str()
