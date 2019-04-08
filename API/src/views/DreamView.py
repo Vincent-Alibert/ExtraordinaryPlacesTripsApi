@@ -1,38 +1,62 @@
-from flask import request, json, Response, Blueprint, g
+# -*- coding: utf-8 -*-
+from flask import request, jsonify, json, Response, Blueprint, g
 from ..models.DreamModel import DreamModel, DreamSchema
 from ..models.CatDreamModel import CatDreamModel
+from ..models.CatTransportModel import CatTransportModel
 from ..shared.Authentication import Auth
+from marshmallow import ValidationError
 
 # from marshmallow import pprint
 
 dream_api = Blueprint('dream_api', __name__)
 dream_schema = DreamSchema()
 
+
 @dream_api.route('/create', methods=['POST'])
 # @Auth.auth_required
-def create() :
+def create():
     """
     Create Dream Function
     """
     req_data = request.get_json()
+    if not req_data:
+        return custom_response({'message': 'No input data provided'}, 400)
     print(req_data)
     # req_data['ownerUser'] = g.user.get('id')
     data, error = dream_schema.load(req_data)
 
     if error:
-        print("*********************")
-        print(dream_schema.load(req_data))
-        print("*********************")
         return custom_response(error, 400)
+
+    if "catOfDream" in data:
+        del data["catOfDream"]
+
+    if "catOfTransport" in data:
+        del data["catOfTransport"]
 
     dream = DreamModel(data)
 
-    for cat in req_data['catOfDream']:
-        catDream = CatDreamModel.get_one_cat(cat)
-        dream.catOfDream.append(catDream)
-        
-    dream.save()
+    if "catOfDream" in req_data:
+        for cat in req_data['catOfDream']:
 
+            catDream = CatDreamModel.get_one_cat(cat["name"])
+            if catDream is None:
+                # Create a new author
+                catDream = CatDreamModel(cat)
+                catDream.save()
+            dream.catOfDream.append(catDream)
+
+    if "catOfTransport" in req_data:
+        for cat in req_data['catOfTransport']:
+
+            catTrans = CatTransportModel.get_one_cat(cat["name"])
+            if catTrans is None:
+                # Create a new author
+                catTrans = CatTransportModel(cat)
+                catTrans.save()
+            dream.catOfTransport.append(catTrans)
+
+    dream.save()
     return custom_response(data, 201)
 
 

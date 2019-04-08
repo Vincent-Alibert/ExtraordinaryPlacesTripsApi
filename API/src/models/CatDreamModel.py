@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from marshmallow import fields, Schema
 from . import db
 import datetime
@@ -30,6 +31,7 @@ class CatDreamModel(db.Model):
     def update(self, data):
         for key, item in data.items():
             setattr(self, key, item)
+        self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
 
     def delete(self):
@@ -52,4 +54,5 @@ class CatDreamSchema(Schema):
     name = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
-    dreams = fields.Nested("DreamSchema", exclude=('catOfDream',), many=True)
+    #dreams = fields.Nested("DreamSchema", only=["name"], many=True)
+    

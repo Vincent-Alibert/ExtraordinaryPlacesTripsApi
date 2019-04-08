@@ -119,5 +119,6 @@ class DreamSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
     ownerUser = fields.Int(required=True)
-    catOfDream = fields.Nested('CatDreamSchema', many=True)
-    catOfTransport = fields.Nested('CatTransportSchema', many=True)
+    catOfDream = fields.Nested('CatDreamSchema', only=["name"], many=True)
+    catOfTransport = fields.Nested('CatTransportSchema', only=["name"], many=True)
+    

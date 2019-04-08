@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from marshmallow import fields, Schema
 from . import db
-
+import datetime
 
 class CatTransportModel(db.Model):
     """
@@ -12,6 +13,8 @@ class CatTransportModel(db.Model):
 
     idCatTransp = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
+    created_at = db.Column(db.DateTime)
+    modified_at = db.Column(db.DateTime)
     
 
     def __init__(self, data):
@@ -19,6 +22,8 @@ class CatTransportModel(db.Model):
          Class constructor
         """
         self.name = data.get("name")
+        self.created_at = datetime.datetime.utcnow()
+        self.modified_at = datetime.datetime.utcnow()
 
     def save(self):
         db.session.add(self)
@@ -35,14 +40,20 @@ class CatTransportModel(db.Model):
         de.session.commit()
 
     @staticmethod
-    def get_one_cat(idCat):
-        return CatDream.query.get(idCat)
+    def get_one_cat(name):
+        """
+        Get one catégorie by name
+        """
+        return CatTransportModel.query.filter_by(name=name).first()
 
 
 class CatTransportSchema(Schema):
     """
     CatTransport Schema
     """
-    idCat = fields.Int(dump_only=True)
+    idCatTransp = fields.Int(dump_only=True)
     name = fields.Str(required=True)
-    dreams = fields.Nested("DreamSchema", many=True, exclude=('catOfTransport',))
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    #dreams = fields.Nested("DreamSchema", only=["name"], many=True)
+    

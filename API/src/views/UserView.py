@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 from flask import request, json, Response, Blueprint, g
 from ..models.UserModel import UserModel, UserSchema
 from ..shared.Authentication import Auth
 
-# from marshmallow import pprint
 
 user_api = Blueprint('user_api', __name__)
 user_schema = UserSchema()
