@@ -24,6 +24,8 @@ def create():
     print(req_data)
     # req_data['ownerUser'] = g.user.get('id')
     data, error = dream_schema.load(req_data)
+    catDream = data["catOfDream"]
+    catTransp = data["catOfTransport"]
 
     if error:
         return custom_response(error, 400)
@@ -33,18 +35,19 @@ def create():
 
     if "catOfTransport" in data:
         del data["catOfTransport"]
+   
 
     dream = DreamModel(data)
 
     if "catOfDream" in req_data:
         for cat in req_data['catOfDream']:
-
             catDream = CatDreamModel.get_one_cat(cat["name"])
             if catDream is None:
                 # Create a new author
                 catDream = CatDreamModel(cat)
                 catDream.save()
             dream.catOfDream.append(catDream)
+            data["catOfDream"] = catDream
 
     if "catOfTransport" in req_data:
         for cat in req_data['catOfTransport']:
@@ -55,6 +58,7 @@ def create():
                 catTrans = CatTransportModel(cat)
                 catTrans.save()
             dream.catOfTransport.append(catTrans)
+            data["catOfDream"] = catTransp
 
     dream.save()
     return custom_response(data, 201)
