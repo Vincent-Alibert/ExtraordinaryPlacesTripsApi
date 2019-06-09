@@ -94,6 +94,10 @@ class DreamModel(db.Model):
     def get_one_dream(id):
         return DreamModel.query.get(id)
 
+    @staticmethod
+    def get_dreams_user(user_id):
+        return DreamModel.query.filter_by(ownerUser=user_id).all()
+
     def __repr__(self):
         return '<id {}>'.format(self.id)
 

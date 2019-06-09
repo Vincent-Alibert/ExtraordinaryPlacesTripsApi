@@ -58,16 +58,44 @@ def create():
                 catTrans = CatTransportModel(cat)
                 catTrans.save()
             dream.catOfTransport.append(catTrans)
-            data["catOfDream"] = catTransp
+            data["catOfTransport"] = catTransp
 
     dream.save()
     return custom_response(data, 201)
 
+@dream_api.route('/view/<int:dream_id>', methods=['GET'])
+# @Auth.auth_required
+def get_a_dream(dream_id):
+  """
+  Get a single dream
+  """
+  dream = DreamModel.get_one_dream(dream_id)
+  if dream.ownerUser != g.user.get('id') :
+    return custom_response({'error': 'Not allowed, you can only access your dreams'}, 403)
+  if not dream:
+    return custom_response({'error': 'dream not found'}, 404)
+
+  ser_dream = dream_schema.dump(dream).data
+  return custom_response(ser_dream, 200) 
+
+@dream_api.route('/all', methods=['GET'])
+# @Auth.auth_required
+def get_a_dream_by_user():
+  """
+  Get all dreams
+  """
+  dreams = DreamModel.get_dreams_user(3)
+  if not dreams:
+    return custom_response({'error': 'dreams not found'}, 404)
+
+  ser_dream = dream_schema.dump(dreams, many=True).data
+  return custom_response(ser_dream, 200) 
 
 def custom_response(res, status_code):
     """
     Custom Response Function
     """
+    print(res)
     return Response(
         mimetype="application/json",
         response=json.dumps(res),
