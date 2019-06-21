@@ -23,9 +23,10 @@ def create():
         return custom_response({'message': 'No input data provided'}, 400)
     print(req_data)
     # req_data['ownerUser'] = g.user.get('id')
+    req_data['ownerUser'] = 3
     data, error = dream_schema.load(req_data)
-    catDream = data["catOfDream"]
-    catTransp = data["catOfTransport"]
+    catDream = req_data["catOfDream"]
+    catTransp = req_data["catOfTransport"]
 
     if error:
         return custom_response(error, 400)
@@ -41,26 +42,29 @@ def create():
 
     if "catOfDream" in req_data:
         for cat in req_data['catOfDream']:
-            catDream = CatDreamModel.get_one_cat(cat["name"])
-            if catDream is None:
-                # Create a new author
-                catDream = CatDreamModel(cat)
-                catDream.save()
-            dream.catOfDream.append(catDream)
-            data["catOfDream"] = catDream
+            print("**cattt****")
+            print(cat)
+            getCatDream = CatDreamModel.get_one_cat(cat["name"])
+            print(catDream)
+            # if catDream is None:
+            #     # Create a new author
+            #     catDream = CatDreamModel(cat)
+            #     catDream.save()
+            dream.catOfDream.append(getCatDream)
+    data["catOfDream"] = catDream
 
     if "catOfTransport" in req_data:
         for cat in req_data['catOfTransport']:
 
             catTrans = CatTransportModel.get_one_cat(cat["name"])
-            if catTrans is None:
-                # Create a new author
-                catTrans = CatTransportModel(cat)
-                catTrans.save()
+            # if catTrans is None:
+            #    # Create a new author
+            #    catTrans = CatTransportModel(cat)
+            #    catTrans.save()
             dream.catOfTransport.append(catTrans)
-            data["catOfTransport"] = catTransp
-
+    data["catOfTransport"] = catTransp
     dream.save()
+    data["idDream"]=dream.idDream
     return custom_response(data, 201)
 
 @dream_api.route('/view/<int:dream_id>', methods=['GET'])
@@ -84,7 +88,11 @@ def get_a_dream_by_user():
   """
   Get all dreams
   """
+  print("************* data **********")
+ 
   dreams = DreamModel.get_dreams_user(3)
+  print(dreams)
+  
   if not dreams:
     return custom_response({'error': 'dreams not found'}, 404)
 

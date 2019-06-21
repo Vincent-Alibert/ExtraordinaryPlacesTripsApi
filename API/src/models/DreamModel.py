@@ -99,7 +99,7 @@ class DreamModel(db.Model):
         return DreamModel.query.filter_by(ownerUser=user_id).all()
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<id {}>'.format(self.idDream)
 
 
 class DreamSchema(Schema):
@@ -123,6 +123,6 @@ class DreamSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
     ownerUser = fields.Int(required=True)
-    catOfDream = fields.Nested('CatDreamSchema', only=["name"], many=True)
-    catOfTransport = fields.Nested('CatTransportSchema', only=["name"], many=True)
+    catOfDream = fields.Nested('CatDreamSchema', only=("name"), many=True)
+    catOfTransport = fields.Nested('CatTransportSchema', only=("name"), many=True)
     
