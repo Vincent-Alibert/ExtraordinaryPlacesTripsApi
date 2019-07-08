@@ -8,8 +8,8 @@ from ..shared.Authentication import Auth
 cattransp_api = Blueprint('cattransp_api', __name__)
 cattransp_schema = CatTransportSchema()
 
-# @Auth.auth_required
 @cattransp_api.route('/create', methods=['POST'])
+@Auth.auth_required
 def create() :
     """
     Create Catégorie for Dream Function

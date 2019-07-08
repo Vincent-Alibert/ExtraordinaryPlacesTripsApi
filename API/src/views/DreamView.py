@@ -13,7 +13,7 @@ dream_schema = DreamSchema()
 
 
 @dream_api.route('/create', methods=['POST'])
-# @Auth.auth_required
+@Auth.auth_required
 def create():
     """
     Create Dream Function
@@ -23,8 +23,7 @@ def create():
     if not req_data:
         return custom_response({'message': 'No input data provided'}, 400)
 
-    # req_data['ownerUser'] = g.user.get('id')
-    req_data['ownerUser'] = 3
+    req_data['ownerUser'] = g.user.get('id')
     data, error = dream_schema.load(req_data)
 
     catDream = req_data["catOfDream"]
@@ -67,7 +66,7 @@ def create():
 
 
 @dream_api.route('/edit/<int:dream_id>', methods=['PUT'])
-# @Auth.auth_required
+@Auth.auth_required
 def update(dream_id):
     """
     Update A Blogpost
@@ -80,8 +79,7 @@ def update(dream_id):
 
     data = dream_schema.dump(dream).data
 
-    # if data.get('owner_id') != g.user.get('id'):
-    if data.get('ownerUser') != 3:
+    if data.get('owner_id') != g.user.get('id'):
         return custom_response({'error': 'permission denied'}, 400)
 
     data, error = dream_schema.load(req_data, partial=True)
@@ -140,14 +138,14 @@ def update(dream_id):
 
 
 @dream_api.route('/view/<int:dream_id>', methods=['GET'])
-# @Auth.auth_required
+@Auth.auth_required
 def get_a_dream(dream_id):
     """
     Get a single dream
     """
     dream = DreamModel.get_one_dream(dream_id)
-    # if dream.ownerUser != g.user.get('id') :
-    #   return custom_response({'error': 'Not allowed, you can only access your dreams'}, 403)
+    if dream.ownerUser != g.user.get('id') :
+      return custom_response({'error': 'Not allowed, you can only access your dreams'}, 403)
     if not dream:
         return custom_response({'error': 'dream not found'}, 404)
 
@@ -156,12 +154,12 @@ def get_a_dream(dream_id):
 
 
 @dream_api.route('/all', methods=['GET'])
-# @Auth.auth_required
+@Auth.auth_required
 def get_a_dream_by_user():
     """
     Get all dreams
     """
-    dreams = DreamModel.get_dreams_user(3)
+    dreams = DreamModel.get_dreams_user(g.user.get('id'))
     if not dreams:
         return custom_response({'error': 'dreams not found'}, 404)
 
@@ -173,7 +171,6 @@ def custom_response(res, status_code):
     """
     Custom Response Function
     """
-    # print(res)
     return Response(
         mimetype="application/json",
         response=json.dumps(res),

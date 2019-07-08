@@ -9,6 +9,7 @@ user_schema = UserSchema()
 
 
 @user_api.route('/create', methods=['POST'])
+@Auth.auth_required
 def create():
     """
     Create User Fonction
@@ -35,20 +36,10 @@ def create():
     return custom_response({'jwt_token': token}, 201)
 
 
-# @user_api.route('/', methods=['GET'])
-# @Auth.auth_required
-# def get_all():
-#   users = UserModel.get_all_users()
-#   ser_users = user_schema.dump(users, many=True).data
-#   return custom_response(ser_users, 200)
-
-
 @user_api.route('/login', methods=['POST'])
 def login():
 
     req_data = request.get_json()
-    print(req_data)
-
     data, error = user_schema.load(req_data, partial=True)
 
     if error:
@@ -134,9 +125,6 @@ def custom_response(res, status_code):
     """
     Custom Response Function
     """
-    print("---------- error -------------")
-    print(status_code)
-    print(res)
     return Response(
         mimetype="application/json",
         response=json.dumps(res),
