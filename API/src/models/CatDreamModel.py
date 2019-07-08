@@ -45,6 +45,8 @@ class CatDreamModel(db.Model):
         """
         return CatDreamModel.query.filter_by(name=name).first()
 
+    def __repr__(self):
+        return '<id {} name : {}>'.format(self.idCat, self.name)
 
 class CatDreamSchema(Schema):
     """

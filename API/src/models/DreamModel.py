@@ -69,8 +69,6 @@ class DreamModel(db.Model):
         self.createdAt = datetime.datetime.utcnow()
         self.modifiedAt = datetime.datetime.utcnow()
         self.ownerUser = data.get('ownerUser')
-        # self.catOfDream = data.get('catOfDream')
-        # self.catOfTransport = data.get('catOfTransport')
 
     def save(self):
         db.session.add(self)

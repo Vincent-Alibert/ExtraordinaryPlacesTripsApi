@@ -19,12 +19,14 @@ def create():
     Create Dream Function
     """
     req_data = request.get_json()
+  
     if not req_data:
         return custom_response({'message': 'No input data provided'}, 400)
-    print(req_data)
+
     # req_data['ownerUser'] = g.user.get('id')
     req_data['ownerUser'] = 3
     data, error = dream_schema.load(req_data)
+
     catDream = req_data["catOfDream"]
     catTransp = req_data["catOfTransport"]
 
@@ -36,16 +38,12 @@ def create():
 
     if "catOfTransport" in data:
         del data["catOfTransport"]
-   
 
     dream = DreamModel(data)
 
     if "catOfDream" in req_data:
         for cat in req_data['catOfDream']:
-            print("**cattt****")
-            print(cat)
             getCatDream = CatDreamModel.get_one_cat(cat["name"])
-            print(catDream)
             # if catDream is None:
             #     # Create a new author
             #     catDream = CatDreamModel(cat)
@@ -55,55 +53,127 @@ def create():
 
     if "catOfTransport" in req_data:
         for cat in req_data['catOfTransport']:
-
             catTrans = CatTransportModel.get_one_cat(cat["name"])
             # if catTrans is None:
             #    # Create a new author
             #    catTrans = CatTransportModel(cat)
             #    catTrans.save()
             dream.catOfTransport.append(catTrans)
+
     data["catOfTransport"] = catTransp
     dream.save()
-    data["idDream"]=dream.idDream
+    data["idDream"] = dream.idDream
     return custom_response(data, 201)
+
+
+@dream_api.route('/edit/<int:dream_id>', methods=['PUT'])
+# @Auth.auth_required
+def update(dream_id):
+    """
+    Update A Blogpost
+    """
+    req_data = request.get_json()
+    dream = DreamModel.get_one_dream(dream_id)
+
+    if not dream:
+        return custom_response({'error': 'dream not found'}, 404)
+
+    data = dream_schema.dump(dream).data
+
+    # if data.get('owner_id') != g.user.get('id'):
+    if data.get('ownerUser') != 3:
+        return custom_response({'error': 'permission denied'}, 400)
+
+    data, error = dream_schema.load(req_data, partial=True)
+
+    if error:
+        return custom_response(error, 400)
+
+    catDream = req_data["catOfDream"]
+    catTransp = req_data["catOfTransport"]
+
+    if "catOfDream" in data:
+        del data["catOfDream"]
+
+    if "catOfTransport" in data:
+        del data["catOfTransport"]
+
+    arrayValueCatDream = []
+    arrayValueCatTravel=[]
+    for catResq in req_data['catOfDream'] :
+        arrayValueCatDream.append(catResq['name'])
+    for catResq in req_data['catOfTransport'] :
+        arrayValueCatDream.append(catResq['name'])
+
+    if "catOfDream" in req_data:
+        for cat in dream.catOfDream :
+            if not cat.name in arrayValueCatDream :
+                dream.catOfDream.remove(cat)
+
+        for cat in req_data['catOfDream']:
+            getCatDream = CatDreamModel.get_one_cat(cat["name"])
+            # if catDream is None:
+            #     # Create a new author
+            #     catDream = CatDreamModel(cat)
+            #     catDream.save()
+            if not getCatDream in dream.catOfDream :
+                dream.catOfDream.append(getCatDream)
+    
+    if "catOfTransport" in req_data:
+
+        for cat in dream.catOfTransport :
+            if not cat.name in arrayValueCatTravel :
+                dream.catOfTransport.remove(cat)
+
+        for cat in req_data['catOfTransport']:
+            catTrans = CatTransportModel.get_one_cat(cat["name"])
+            # if catTrans is None:
+            #    # Create a new author
+            #    catTrans = CatTransportModel(cat)
+            #    catTrans.save()
+            dream.catOfTransport.append(catTrans)
+    
+    dream.update(data)
+
+    data = dream_schema.dump(dream).data
+    return custom_response(data, 200)
+
 
 @dream_api.route('/view/<int:dream_id>', methods=['GET'])
 # @Auth.auth_required
 def get_a_dream(dream_id):
-  """
-  Get a single dream
-  """
-  dream = DreamModel.get_one_dream(dream_id)
-  if dream.ownerUser != g.user.get('id') :
-    return custom_response({'error': 'Not allowed, you can only access your dreams'}, 403)
-  if not dream:
-    return custom_response({'error': 'dream not found'}, 404)
+    """
+    Get a single dream
+    """
+    dream = DreamModel.get_one_dream(dream_id)
+    # if dream.ownerUser != g.user.get('id') :
+    #   return custom_response({'error': 'Not allowed, you can only access your dreams'}, 403)
+    if not dream:
+        return custom_response({'error': 'dream not found'}, 404)
 
-  ser_dream = dream_schema.dump(dream).data
-  return custom_response(ser_dream, 200) 
+    ser_dream = dream_schema.dump(dream).data
+    return custom_response(ser_dream, 200)
+
 
 @dream_api.route('/all', methods=['GET'])
 # @Auth.auth_required
 def get_a_dream_by_user():
-  """
-  Get all dreams
-  """
-  print("************* data **********")
- 
-  dreams = DreamModel.get_dreams_user(3)
-  print(dreams)
-  
-  if not dreams:
-    return custom_response({'error': 'dreams not found'}, 404)
+    """
+    Get all dreams
+    """
+    dreams = DreamModel.get_dreams_user(3)
+    if not dreams:
+        return custom_response({'error': 'dreams not found'}, 404)
 
-  ser_dream = dream_schema.dump(dreams, many=True).data
-  return custom_response(ser_dream, 200) 
+    ser_dream = dream_schema.dump(dreams, many=True).data
+    return custom_response(ser_dream, 200)
+
 
 def custom_response(res, status_code):
     """
     Custom Response Function
     """
-    print(res)
+    # print(res)
     return Response(
         mimetype="application/json",
         response=json.dumps(res),
