@@ -9,7 +9,7 @@ cattransp_api = Blueprint('cattransp_api', __name__)
 cattransp_schema = CatTransportSchema()
 
 @cattransp_api.route('/create', methods=['POST'])
-@Auth.auth_required
+# @Auth.auth_required
 def create() :
     """
     Create Catégorie for Dream Function

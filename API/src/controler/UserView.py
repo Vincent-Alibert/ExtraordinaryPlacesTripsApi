@@ -9,7 +9,7 @@ user_schema = UserSchema()
 
 
 @user_api.route('/create', methods=['POST'])
-@Auth.auth_required
+
 def create():
     """
     Create User Fonction

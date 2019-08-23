@@ -11,7 +11,8 @@ class Development(object):
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = "azertdfgh"
-    SQLALCHEMY_DATABASE_URI = "postgres://valibert:admin@127.0.0.1:5432/travelapidb"
+    SQLALCHEMY_DATABASE_URI = "postgresql://valibert:admin@127.0.0.1:5432/travelapidb"
+    # SQLALCHEMY_ECHO = True
 
 
 class Production(object):
@@ -21,7 +22,7 @@ class Production(object):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = "postgres://valibert:admin@127.0.0.1:5432/travelapidb"
+    SQLALCHEMY_DATABASE_URI = "postgresql://valibert:admin@127.0.0.1:5432/travelapidb"
     JWT_SECRET_KEY = "azertdfgh"
 
 
@@ -31,7 +32,7 @@ class Testing(object):
     """
     TESTING = True
     JWT_SECRET_KEY = "azertdfgh!"
-    SQLALCHEMY_DATABASE_URI = "postgres://valibert:admin@127.0.0.1:5432/travelapidb"
+    SQLALCHEMY_DATABASE_URI = "postgresql://valibert:admin@127.0.0.1:5432/blogapidbtest"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
