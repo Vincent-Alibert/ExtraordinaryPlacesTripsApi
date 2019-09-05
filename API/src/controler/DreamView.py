@@ -19,10 +19,6 @@ def create():
     Create Dream Function
     """
     req_data = request.get_json()
-    print("****************************")
-    print(request.get_json())
-    print("****************************")
-    print(g.user.get('id'))
     if not req_data:
         return custom_response({'message': 'No input data provided'}, 400)
 
