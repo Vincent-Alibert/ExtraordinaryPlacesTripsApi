@@ -78,16 +78,10 @@ def update(dream_id):
 
     data = dream_schema.dump(dream).data
 
-    print("data")
-    print(data)
-
     if data.get('ownerUser') != g.user.get('id'):
         return custom_response({'error': 'permission denied'}, 400)
 
     data, error = dream_schema.load(req_data, partial=True)
-
-    print('*********')
-    print(error)
 
     if error:
         return custom_response(error, 400)
